@@ -7,9 +7,10 @@ const secretKey = process.env.SECRET_KEY
 
 
 const validateJwt = (req = request, res = response, next) => {
+    // console.log({req})
     const token = req.params.token
-   
-
+    console.log({body: req.body, token})
+    
     if (!token) {
         return res.status(403).json({
           status: 'error',
@@ -19,26 +20,21 @@ const validateJwt = (req = request, res = response, next) => {
 
       try {
         const {jwtPayload} = jwt.verify(token, secretKey);
-
-        const origin = jwtPayload.origin;
+       
+        const domain = jwtPayload.origin;
         const requestOrigin = req.headers.origin;
-        console.log({
-            jwtPayload,
-            origin, 
-            requestOrigin
-        })
-        if ( origin !== requestOrigin) return res.status(401).json({
-            status: 'error',
-            msg: 'Unauthorized',
-        })
+        
         //! find client in db by jwtPayload.id
 
-        req.client = jwtPayload;
-
+        req.clientId = jwtPayload.id;
+        req.jwtDomain = domain;
+        
+  
         next();
       } catch (error) {
+        console.log({error})
         if (error.message === 'jwt expired') {
-          return res.status(405).json({
+          return res.status(410).json({
             status: 'error',
             msg: 'Token expired',
           });

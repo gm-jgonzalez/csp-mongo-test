@@ -9,7 +9,7 @@ const generateJWT = (payload) => {
         id: payload.id,
         origin: payload.origin,
     } 
-  const token = jwt.sign({ jwtPayload }, secretKey, { expiresIn: "5m" });
+  const token = jwt.sign({ jwtPayload }, secretKey, { expiresIn: "30m" });
 
   return token;
 };

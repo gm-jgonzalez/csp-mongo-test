@@ -3,12 +3,14 @@ const cors = require("cors");
 const { dbConnection } = require("../database/config");
 
 const cspRouter = require("../routes/csp");
+const monitorPageRouter = require("../routes/monitorPage");
 
 class Server {
 	constructor() {
 		this.app = express();
 		this.port = process.env.PORT;
 		this.cspPath = "/api/csp";
+		this.monitorPagePath = "/api/monitor-page";
 
 		// Conectar a base de datos
 		this.conectarDB();
@@ -40,6 +42,7 @@ class Server {
 
 	routes() {
 		this.app.use(this.cspPath, cspRouter);
+		this.app.use(this.monitorPagePath, monitorPageRouter);
 	}
 
 	listen() {
