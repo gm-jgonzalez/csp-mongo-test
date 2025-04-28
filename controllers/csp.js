@@ -26,10 +26,10 @@ const cspReports = async (req = request, res = response) => {
 		
 		const reportOriginUrl = req.originURL + req.reportPath
 
-		// console.log({
-		// 	reportOriginUrl,
-		// 	jwtDomain: req.jwtDomain,
-		// })
+		console.log({
+			reportOriginUrl,
+			jwtDomain: req.jwtDomain,
+		})
 		if (reportOriginUrl !== req.jwtDomain) {
 			return res.status(403).json({
 				status: "error",

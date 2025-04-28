@@ -43,6 +43,8 @@ const createCspReport = async ({ req, report, clientId, domain, path }) => {
 			disposition: informe["disposition"],
 			violationHash: hash,
 			status: "new",
+			scriptSample: informe["script-sample"],
+			sourceFile: informe["source-file"],
 			}
 		}
 	})

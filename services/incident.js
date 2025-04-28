@@ -1,10 +1,10 @@
+const { detectAttack } = require("../helpers/detectAttack");
 const Incident = require("../models/incident");
 const { getMonitorPage } = require("./monitorPage");
 
-
 const getIncident = async ({ data: { incidentId } }) => {
 	console.log({
-		incidentId
+		incidentId,
 	});
 
 	try {
@@ -25,7 +25,7 @@ const getIncident = async ({ data: { incidentId } }) => {
 
 const getIncidentByViolationHash = async (violationHash) => {
 	console.log({
-		violationHash
+		violationHash,
 	});
 
 	try {
@@ -40,17 +40,16 @@ const getIncidentByViolationHash = async (violationHash) => {
 	}
 };
 
-
 const createIncident = async ({ data: { pageId, newIncidentBody } }) => {
 	console.log({
 		pageId,
-		newIncidentBody
+		newIncidentBody,
 	});
 
 	try {
-
 		// get attack type and description from DB, based on report information
 
+		const { attackType, attackDescription } = detectAttack(newIncidentBody.blockedResource, newIncidentBody.violatedDirective);
 		const newIncident = await Incident.create({
 			pageId: pageId._id,
 			documentUri: newIncidentBody.documentUri,
@@ -58,8 +57,8 @@ const createIncident = async ({ data: { pageId, newIncidentBody } }) => {
 			violatedDirective: newIncidentBody.violatedDirective,
 			effectiveDirective: newIncidentBody.effectiveDirective,
 			disposition: newIncidentBody.disposition,
-			attackType: "XSS",
-			attackDescription: "Some description",
+			attackType: attackType,
+			attackDescription: attackDescription,
 			violationHash: newIncidentBody.violationHash,
 			lastNotified: new Date(),
 		});
@@ -71,8 +70,8 @@ const createIncident = async ({ data: { pageId, newIncidentBody } }) => {
 	}
 };
 
-
-const createOrUpdateIncident = async ({ data: { pageId, hash ,newIncidentBody } }) => {
+const createOrUpdateIncident = async ({ data: { pageId, hash, newIncidentBody } }) => {
+	const { attackType, attackDescription } = detectAttack(newIncidentBody.blockedResource, newIncidentBody.violatedDirective);
 	const incident = await Incident.findOneAndUpdate(
 		{ violationHash: hash }, // Query by violationHash
 		{
@@ -84,19 +83,19 @@ const createOrUpdateIncident = async ({ data: { pageId, hash ,newIncidentBody } 
 				effectiveDirective: newIncidentBody.effectiveDirective,
 				disposition: newIncidentBody.disposition,
 				violationHash: hash,
-				attackType: "XSS",
-				attackDescription: "Some description",
+				attackType: attackType,
+				attackDescription: attackDescription,
 				status: "new",
 			},
 		},
 		{ upsert: true, new: true } // Create a new document if none exists
 	);
 	return incident;
-}
+};
 
 module.exports = {
 	createIncident,
 	getIncident,
 	getIncidentByViolationHash,
-	createOrUpdateIncident
+	createOrUpdateIncident,
 };

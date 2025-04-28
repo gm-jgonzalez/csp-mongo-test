@@ -4,13 +4,16 @@ const normalizePath = (url) => {
       const urlObj = new URL(url);
       console.log('URL:', urlObj);
       const path = urlObj.pathname;
-  
+      console.log('Path:', path);
       // Definir patrones para normalización
       const pathPatterns = [
         // Formato: [expresión regular para detectar, versión normalizada]
         [/^\/payments\/[^\/]+\/?$/, '/payments'],
+        [/^\/payments\/[^\/]+\/?$/, '/payments'],
         // [/^\/payments\/\(S\([^)]+\)\).*$/, '/payments'],
         [/^\/orders\/\d+$/, '/orders'],      // Normaliza /orders/12345 a /orders
+        [/^\/test\/\d+$/, '/test'],      // Normaliza /orders/12345 a /orders
+        [/^\/test\/[^\/]+(?:-[^\/]+)*\/?$/, '/test']
         // [/^\/users\/[^\/]+\/profile$/, '/users/profile'],  // /users/nombre/profile a /users/profile
         // Puedes agregar más patrones según sea necesario
       ];

@@ -5,7 +5,8 @@ function cleanString(str) {
 
 function sanitazeReport(req, res, next) {
     try {
-      const originalReport = req.body['csp-report'];
+      
+      req.originalReport = structuredClone(req.body['csp-report']);
       const informe = req.body['csp-report'];
 
       // Obtener la IP del cliente
@@ -31,7 +32,7 @@ function sanitazeReport(req, res, next) {
       const camposPermitidos = [
         'document-uri', 'referrer', 'blocked-uri', 
         'violated-directive', 'effective-directive', 'original-policy',
-        'source-file', 'line-number', 'column-number', 'status-code','disposition',
+        'source-file', 'line-number', 'column-number', 'status-code','disposition', 'script-sample'
       ];
       
       Object.keys(informe).forEach(key => {
@@ -46,7 +47,7 @@ function sanitazeReport(req, res, next) {
       });
       
       req.body['csp-report'] = informe;
-      req.originalReport = originalReport; // Guardar el informe original para referencia
+      
       next();
     } catch (error) {
       console.error('Error al validar informe:', error);
